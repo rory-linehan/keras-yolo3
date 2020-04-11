@@ -1,20 +1,15 @@
-#! /usr/bin/env python
-
-import argparse
 import os
 import numpy as np
-import json
-from voc import parse_voc_annotation
-from yolo import create_yolov3_model, dummy_loss
-from generator import BatchGenerator
-from utils.utils import normalize, evaluate, makedirs
+import tensorflow as tf
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.optimizers import Adam
-from callbacks import CustomModelCheckpoint, CustomTensorBoard
-from utils.multi_gpu_model import multi_gpu_model
-import tensorflow as tf
-import keras
 from keras.models import load_model
+from .voc import parse_voc_annotation
+from .yolo import create_yolov3_model, dummy_loss
+from .generator import BatchGenerator
+from .utils.utils import normalize, evaluate, makedirs
+from .callbacks import CustomModelCheckpoint, CustomTensorBoard
+from .utils.multi_gpu_model import multi_gpu_model
 
 
 config = tf.compat.v1.ConfigProto(
@@ -153,14 +148,13 @@ def create_model(
             noobj_scale         = noobj_scale,
             xywh_scale          = xywh_scale,
             class_scale         = class_scale
-        )  
-
+        )
     # load the pretrained weight if exists, otherwise load the backend weight only
     if os.path.exists(saved_weights_name): 
         print("\nLoading pretrained weights.\n")
         template_model.load_weights(saved_weights_name)
     else:
-        template_model.load_weights("backend.h5", by_name=True)       
+        template_model.load_weights("models/backend.h5", by_name=True)
 
     if multi_gpu > 1:
         train_model = multi_gpu_model(template_model, gpus=multi_gpu)
@@ -172,12 +166,7 @@ def create_model(
 
     return train_model, infer_model
 
-def _main_(args):
-    config_path = args.conf
-
-    with open(config_path) as config_buffer:    
-        config = json.loads(config_buffer.read())
-
+def _main_(config):
     ###############################
     #   Parse the annotations 
     ###############################
@@ -279,11 +268,4 @@ def _main_(args):
     # print the score
     for label, average_precision in average_precisions.items():
         print(labels[label] + ': {:.4f}'.format(average_precision))
-    print('mAP: {:.4f}'.format(sum(average_precisions.values()) / len(average_precisions)))           
-
-if __name__ == '__main__':
-    argparser = argparse.ArgumentParser(description='train and evaluate YOLO_v3 model on any dataset')
-    argparser.add_argument('-c', '--conf', help='path to configuration file')   
-
-    args = argparser.parse_args()
-    _main_(args)
+    print('mAP: {:.4f}'.format(sum(average_precisions.values()) / len(average_precisions)))
