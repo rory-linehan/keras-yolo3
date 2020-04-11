@@ -4,6 +4,8 @@
 
 This is a fork fo the upstream project, 
 which has been modified at the interface to integrate more easily into other systems.
+It's been tested with:
+* Python 3.7.6
 
 ## Dataset and Model
 
