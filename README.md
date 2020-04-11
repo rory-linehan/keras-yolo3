@@ -1,5 +1,10 @@
 # YOLO3 (Detection, Training, and Evaluation)
 
+## Fork changes
+
+This is a fork fo the upstream project, 
+which has been modified at the interface to integrate more easily into other systems.
+
 ## Dataset and Model
 
 Dataset | mAP | Demo | Config | Model
