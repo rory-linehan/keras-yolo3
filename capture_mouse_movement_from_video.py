@@ -3,7 +3,7 @@ import json
 import cv2
 from utils.utils import get_yolo_boxes, makedirs
 from utils.bbox import draw_boxes
-import gen_anchors
+from . import gen_anchors
 from keras.models import load_model
 from tqdm import tqdm
 
