@@ -13,10 +13,11 @@ from .utils.multi_gpu_model import multi_gpu_model
 
 
 config = tf.compat.v1.ConfigProto(
-    gpu_options = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.9)
-    # device_count = {'GPU': 1}
+    gpu_options=tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.9),
+    device_count={'GPU': 1}
 )
 config.gpu_options.allow_growth = True
+#config.allow_soft_placement = True
 session = tf.compat.v1.Session(config=config)
 tf.compat.v1.keras.backend.set_session(session)
 
@@ -36,7 +37,7 @@ def create_training_instances(
     if os.path.exists(valid_annot_folder):
         valid_ints, valid_labels = parse_voc_annotation(valid_annot_folder, valid_image_folder, valid_cache, labels)
     else:
-        print("valid_annot_folder not exists. Splitting the training set.")
+        print("valid_annot_folder does not exist. Splitting the training set.")
 
         train_valid_split = int(0.8*len(train_ints))
         np.random.seed(0)
