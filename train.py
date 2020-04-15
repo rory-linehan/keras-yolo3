@@ -1,6 +1,8 @@
 import os
 import numpy as np
 import tensorflow as tf
+# https://github.com/google/tangent/issues/95
+tf.to_float = lambda x: tf.cast(x, tf.float32)
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.optimizers import Adam
 from keras.models import load_model
@@ -13,8 +15,8 @@ from .utils.multi_gpu_model import multi_gpu_model
 
 
 config = tf.compat.v1.ConfigProto(
-    gpu_options=tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.9),
-    device_count={'GPU': 1}
+    gpu_options=tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.9)
+    #device_count={'GPU': 2}
 )
 config.gpu_options.allow_growth = True
 #config.allow_soft_placement = True
@@ -220,7 +222,7 @@ def _main_(config):
         config['train']['warmup_epochs'] = 0
     warmup_batches = config['train']['warmup_epochs'] * (config['train']['train_times']*len(train_generator))   
 
-    os.environ['CUDA_VISIBLE_DEVICES'] = config['train']['gpus']
+    #os.environ['CUDA_VISIBLE_DEVICES'] = config['train']['gpus']
     multi_gpu = len(config['train']['gpus'].split(','))
 
     train_model, infer_model = create_model(

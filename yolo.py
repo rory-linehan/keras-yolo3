@@ -148,7 +148,7 @@ class YoloLayer(Layer):
         """
         Warm-up training
         """
-        batch_seen = tf.assign_add(batch_seen, 1.)
+        batch_seen = tf.compat.v1.assign(batch_seen, 1.)
         
         true_box_xy, true_box_wh, xywh_mask = tf.cond(tf.less(batch_seen, self.warmup_batches+1), 
                               lambda: [true_box_xy + (0.5 + self.cell_grid[:,:grid_h,:grid_w,:,:]) * (1-object_mask), 
